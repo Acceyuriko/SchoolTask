@@ -1,11 +1,11 @@
-#ifndef __GLOBAL_FUNCTION_H__
-#define __GLOBAL_FUNCTION_H__
+#ifndef __DRAW_FUNCTION_H__
+#define __DRAW_FUNCTION_H__
 
 #include <glut.h>
 #include <cmath>
 #include <vector>
 
-void Draw_Cube(GLfloat x, GLfloat y, GLfloat z, GLfloat a, GLfloat b, GLfloat c);
+void DrawCube(GLfloat x, GLfloat y, GLfloat z, GLfloat a, GLfloat b, GLfloat c);
 
 /**
 * general function to draw various prismoid
@@ -22,6 +22,15 @@ void DrawPrism(GLdouble size);
 
 void DrawCylinder(GLdouble size);
 
+void DrawWalls(GLuint texture);
+
+void DrawWalls(void* param);
+
+void DrawFloor(GLuint texture);
+
+void DrawFloor(void* param);
 
 
-#endif //__GLOBAL_FUNCTION_H__
+
+
+#endif //__DRAW_FUNCTION_H__

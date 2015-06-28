@@ -7,6 +7,7 @@
 class Light {
 public:
     Light(float x, float y, float z, int l, int r);
+    ~Light();
     void enable();
     void luminance_add(float x, float y);
     void luminance_sub(float x, float y);

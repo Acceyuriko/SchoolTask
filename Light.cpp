@@ -5,6 +5,8 @@ Light::Light(float x, float y, float z, int l, int r)
     : Lx(x), Ly(y), Lz(z), Ll(l), Lr(r) {
 }
 
+Light::~Light() { }
+
 void Light::enable() {
     glEnable(GL_LIGHTING);
     GLfloat light_pos[] = {Lx, Ly, Lz, 1};

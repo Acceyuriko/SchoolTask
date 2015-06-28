@@ -1,12 +1,14 @@
 #include <cmath>
 #include "Door.h"
-#include "GlobalFunction.h"
+#include "DrawFunction.h"
 
 using namespace std;
 
 Door::Door(float x, float y, bool p) 
     : bOpen(false), Dx(x), Dy(y), Dp(p){
 }
+
+Door::~Door() { }
 
 void Door::draw(GLuint texture) {
     if (!bOpen) {
@@ -16,10 +18,10 @@ void Door::draw(GLuint texture) {
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
         if (Dp) {
-            Draw_Cube(Dx, Dy, 10, 20, 1, 20);
+            DrawCube(Dx, Dy, 10, 20, 1, 20);
         }
         else {
-            Draw_Cube(Dx, Dy, 10, 1, 20, 20);
+            DrawCube(Dx, Dy, 10, 1, 20, 20);
         }
 
         glDisable(GL_TEXTURE_2D);
@@ -43,10 +45,10 @@ void Door::approach_notice(float x, float y, GLuint texture) {
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
             if (Dp) {
-                Draw_Cube(Dx, Dy, 10, 20, 1.1, 20);
+                DrawCube(Dx, Dy, 10, 20, 1.1, 20);
             }
             else {
-                Draw_Cube(Dx, Dy, 10, 1.1, 20, 20);
+                DrawCube(Dx, Dy, 10, 1.1, 20, 20);
             }
 
             glDisable(GL_TEXTURE_2D);

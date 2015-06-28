@@ -1,9 +1,11 @@
 #include "Dyn.h"
-#include "GlobalFunction.h"
+#include "DrawFunction.h"
 
 Dyn::Dyn(float ix, float iy, float iz) 
     : l(1), x(ix), y(iy), z(iz), hue(0), shape(CUBE), bRotate(true), angle(0){
 }
+
+Dyn::~Dyn() { }
 
 void Dyn::draw() {
     float dif[4];

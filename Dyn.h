@@ -6,6 +6,7 @@
 class Dyn {
 public:
     Dyn(float ix, float iy, float iz);
+    ~Dyn();
     void draw();
     void rotate();
     bool if_rotate();
