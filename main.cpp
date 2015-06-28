@@ -1,17 +1,16 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include "glut.h"
+#include <cmath>
+#include <glut.h>
+#include "GlobalFunction.h"
+#include "Light.h"
+#include "Door.h"
+#include "Dyn.h"
+
+using namespace std;
 
 #define BITMAP_ID 0x4D42
-
-#define CUBE 0
-#define BALL 1
-#define CYLINDER 2
-#define CONE 3
-#define PRISM 4
-#define PRISMOID 5
 
 const float pi = 3.14159;
 
@@ -42,342 +41,12 @@ GLuint texture[4];
 
 GLint tableList = 0;
 
-void Draw_Cube(GLfloat x, GLfloat y, GLfloat z, GLfloat a, GLfloat b, GLfloat c)
-{
-	glPushMatrix();
-	glTranslatef(x, y, z);
-	glScalef(a, b, c);
-	glScalef(0.5, 0.5, 0.5);
-
-	glTranslatef(0, 0, 1);
-	glBegin(GL_QUADS);              
-        glTexCoord2i(1,1); glVertex2i(1,1);
-        glTexCoord2i(1,0); glVertex2i(1,-1);
-        glTexCoord2i(0,0); glVertex2i(-1,-1);
-        glTexCoord2i(0,1); glVertex2i(-1,1);
-	glEnd();
-	glTranslatef(0, 0, -2);
-	glBegin(GL_QUADS);              
-        glTexCoord2i(1,1); glVertex2i(1,1);
-        glTexCoord2i(1,0); glVertex2i(1,-1);
-        glTexCoord2i(0,0); glVertex2i(-1,-1);
-        glTexCoord2i(0,1); glVertex2i(-1,1);
-	glEnd();
-	glTranslatef(0, -1, 1);
-	glBegin(GL_QUADS);              
-        glTexCoord2i(1,1); glVertex3i(1,0,1);
-        glTexCoord2i(1,0); glVertex3i(1,0,-1);
-        glTexCoord2i(0,0); glVertex3i(-1,0,-1);
-        glTexCoord2i(0,1); glVertex3i(-1,0,1);
-	glEnd();
-	glTranslatef(0, 2, 0);
-	glBegin(GL_QUADS);              
-        glTexCoord2i(1,1); glVertex3i(1,0,1);
-        glTexCoord2i(1,0); glVertex3i(1,0,-1);
-        glTexCoord2i(0,0); glVertex3i(-1,0,-1);
-        glTexCoord2i(0,1); glVertex3i(-1,0,1);
-	glEnd();
-	glTranslatef(-1, -1, 0);
-	glBegin(GL_QUADS);              
-        glTexCoord2i(1,1); glVertex3i(0,1,1);
-        glTexCoord2i(1,0); glVertex3i(0,1,-1);
-        glTexCoord2i(0,0); glVertex3i(0,-1,-1);
-        glTexCoord2i(0,1); glVertex3i(0,-1,1);
-	glEnd();
-	glTranslatef(2, 0, 0);
-	glBegin(GL_QUADS);              
-        glTexCoord2i(1,1); glVertex3i(0,1,1);
-        glTexCoord2i(1,0); glVertex3i(0,1,-1);
-        glTexCoord2i(0,0); glVertex3i(0,-1,-1);
-        glTexCoord2i(0,1); glVertex3i(0,-1,1);
-	glEnd();
-
-	glPopMatrix();
-}
-
-class Door
-{
-	bool bOpen;
-	float Dx;
-	float Dy;
-	bool Dp;
-public:
-	Door(float x, float y, bool p)
-	{
-		bOpen = false;
-		Dx = x;
-		Dy = y;
-		Dp = p;
-	}
-	void draw()
-	{
-		if (!bOpen)
-		{
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, texture[1]); 
-			glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-
-			if (Dp)
-				Draw_Cube(Dx, Dy, 10, 20, 1, 20);
-			else
-				Draw_Cube(Dx, Dy, 10, 1, 20, 20);
-
-			glDisable(GL_TEXTURE_2D);
-		}
-	}
-	void approach(float x, float y)
-	{
-		if ( (abs(x-Dx)+abs(y-Dy))>3 && (abs(x-Dx)+abs(y-Dy))<15 )
-		{
-			bOpen = !bOpen;
-		}
-	}
-	void approach_notice(float x, float y)
-	{
-		if (!bOpen)
-		{
-			if ( (abs(x-Dx)+abs(y-Dy))>3 && (abs(x-Dx)+abs(y-Dy))<15 )
-			{
-				glEnable(GL_TEXTURE_2D);
-				glBindTexture(GL_TEXTURE_2D, texture[2]); 
-				glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-
-				if (Dp)
-					Draw_Cube(Dx, Dy, 10, 20, 1.1, 20);
-				else
-					Draw_Cube(Dx, Dy, 10, 1.1, 20, 20);
-
-				glDisable(GL_TEXTURE_2D);
-			}
-		}
-	}
-};
-
 Door Door1(0, 29, true);
 Door Door2(29, 0, false);
 Door Door3(0, -29, true);
 Door Door4(-29, 0, false);
 
-class Dyn
-{
-	float l; // radium, length
-	float x; // x
-	float y; // y
-	float z; // z
-	int hue;
-	int shape;
-	float angle;
-	bool bRotate;
-	float r;
-	float g;
-	float b;
-public:
-	Dyn(float ix, float iy, float iz)
-	{
-		l = 1;
-		x = ix;
-		y = iy;
-		z = iz;
-		hue = 0;
-		shape = CUBE;
-		bRotate = true;
-		angle = 0;
-	}
-	void draw()
-	{
-		float dif[4];
-		float spe[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-		if (hue < 80)
-		{
-			dif[0] = 0.8;
-			if (hue > 39) dif[0] = 0.8 * (80 - hue) / 40;
-			dif[1] = 0.8;
-			if (hue < 40) dif[1] = 0.8 * (hue) / 40;
-			dif[2] = 0;
-			dif[3] = 0.7;
-		}
-		else if (hue < 160)
-		{
-			dif[1] = 0.8;
-			if (hue > 119) dif[1] = 0.8 * (160 - hue) / 40;
-			dif[2] = 0.8;
-			if (hue < 120) dif[2] = 0.8 * (hue - 80) / 40;
-			dif[0] = 0;
-			dif[3] = 0.7;
-		}
-		else
-		{
-			dif[2] = 0.8;
-			if (hue > 199) dif[2] = 0.8 * (240 - hue) / 40;
-			dif[0] = 0.8;
-			if (hue < 200) dif[0] = 0.8 * (hue - 160) / 40;
-			dif[1] = 0;
-			dif[3] = 0.7;
-		}
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
-		//glMaterialfv(GL_FRONT, GL_SPECULAR, spe);
-		glMateriali(GL_FRONT_AND_BACK,GL_SHININESS,16);
-		glPushMatrix();
-		glTranslatef(x, y, z);
-		glRotatef(angle, 0.5, 1, 0);
-		switch(shape)
-		{
-		case CUBE:
-			{
-				glutSolidCube(l);
-				break;
-			}
-		case BALL:
-			{
-				glutSolidSphere(l, 24, 24);
-				break;
-			}
-		case CONE:
-			{
-				glutSolidCone(l, l*1.5, 24, 24);
-				break;
-			}
-		default:
-			{
-				glutSolidCube(l);
-				break;
-			}
-		}
-		glPopMatrix();
-		r = dif[0];
-		g = dif[1];
-		b = dif[2];
-	}
-	void rotate()
-	{
-		bRotate = !bRotate;
-	}
-	bool if_rotate()
-	{
-		return bRotate;
-	}
-	void angle_change()
-	{
-		if (angle == 359.1) angle = 0;
-		else angle += 0.1;
-	}
-	void hue_add()
-	{
-		if (hue == 238) hue = 0;
-		else hue += 2;
-	}
-	void hue_sub()
-	{
-		if (hue == 0) hue = 238;
-		else hue -= 2;
-	}
-	void size_add()
-	{
-		if (l <= 1.5) l += 0.1;
-	}
-	void size_sub()
-	{
-		if (l >= 0.5) l -= 0.1;
-	}
-	void shape_change()
-	{
-		if (shape == 5) shape = 0;
-		else shape += 1;
-	}
-};
-
 Dyn Dyn1(0, 0, 10);
-
-class Light
-{
-	float Lx;
-	float Ly;
-	float Lz;
-	int Ll;
-	int Lr;
-public:
-	Light(float x, float y, float z, int l, int r)
-	{
-		Lx = x;
-		Ly = y;
-		Lz = z;
-		Ll = l;
-		Lr = r;
-	}
-	void enable()
-	{
-		glEnable(GL_LIGHTING);
-		GLfloat light_pos[] = {Lx,Ly,Lz,1};
-		GLfloat light_col[] = {Ll/240,Ll/240,Ll/240,1};
-		switch(Lr)
-		{
-		case 0:{
-			glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-			glLightfv(GL_LIGHT0, GL_AMBIENT, light_col);
-			glEnable(GL_LIGHT0);
-			break;
-			   }
-		case 1:{
-			glLightfv(GL_LIGHT1, GL_POSITION, light_pos);
-			glLightfv(GL_LIGHT1, GL_AMBIENT, light_col);
-			GLfloat light_dir[] = {0,0,-1};
-			glLightf(GL_LIGHT1,  GL_SPOT_CUTOFF, 60);
-			glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, light_dir);
-			glLightf(GL_LIGHT1,GL_SPOT_EXPONENT,2.);
-			//glLightf(GL_LIGHT1,GL_LINEAR_ATTENUATION,1.0);
-			glEnable(GL_LIGHT1);
-			break;
-			   }
-		case 2:{
-			glLightfv(GL_LIGHT2, GL_POSITION, light_pos);
-			glLightfv(GL_LIGHT2, GL_AMBIENT, light_col);
-			GLfloat light_dir[] = {0,0,-1};
-			glLightf(GL_LIGHT2,  GL_SPOT_CUTOFF, 60);
-			glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light_dir);
-			glLightf(GL_LIGHT2,GL_SPOT_EXPONENT,2.);
-			//glLightf(GL_LIGHT2,GL_LINEAR_ATTENUATION,1.0);
-			glEnable(GL_LIGHT2);
-			break;
-			   }
-		case 3:{
-			glLightfv(GL_LIGHT3, GL_POSITION, light_pos);
-			glLightfv(GL_LIGHT3, GL_AMBIENT, light_col);
-			GLfloat light_dir[] = {0,0,-1};
-			glLightf(GL_LIGHT3,  GL_SPOT_CUTOFF, 60);
-			glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, light_dir);
-			glLightf(GL_LIGHT3,GL_SPOT_EXPONENT,2.);
-			//glLightf(GL_LIGHT3,GL_LINEAR_ATTENUATION,1.0);
-			glEnable(GL_LIGHT3);
-			break;
-			   }
-		case 4:{
-			glLightfv(GL_LIGHT4, GL_POSITION, light_pos);
-			glLightfv(GL_LIGHT4, GL_AMBIENT, light_col);
-			GLfloat light_dir[] = {0,0,-1};
-			glLightf(GL_LIGHT4,  GL_SPOT_CUTOFF, 60);
-			glLightfv(GL_LIGHT4, GL_SPOT_DIRECTION, light_dir);
-			glLightf(GL_LIGHT4,GL_SPOT_EXPONENT,2.);
-			//glLightf(GL_LIGHT4,GL_LINEAR_ATTENUATION,1.0);
-			glEnable(GL_LIGHT4);
-			break;
-			   }
-		}
-	}
-	void luminance_add(float x, float y)
-	{
-		if ( (abs(x-Lx)+abs(y-Ly)<12) )
-		{
-			if (Ll < 240) Ll += 5;
-		}
-	}
-	void luminance_sub(float x, float y)
-	{
-		if ( (abs(x-Lx)+abs(y-Ly)<12) )
-		{
-			if (Ll > 60) Ll -= 5;
-		}
-	}
-};
 
 Light Light0( 0, 0, 19, 240, 0 );
 Light Light1( 18, 0, 19, 240, 1 );
@@ -494,14 +163,14 @@ void Draw_Scene()
 
 	//The Door
 
-	Door1.draw();
-	Door1.approach_notice(eye[0], eye[1]);
-	Door2.draw();
-	Door2.approach_notice(eye[0], eye[1]);
-	Door3.draw();
-	Door3.approach_notice(eye[0], eye[1]);
-	Door4.draw();
-	Door4.approach_notice(eye[0], eye[1]);
+	Door1.draw(texture[1]);
+	Door1.approach_notice(eye[0], eye[1], texture[2]);
+	Door2.draw(texture[1]);
+	Door2.approach_notice(eye[0], eye[1], texture[2]);
+	Door3.draw(texture[1]);
+	Door3.approach_notice(eye[0], eye[1], texture[2]);
+	Door4.draw(texture[1]);
+	Door4.approach_notice(eye[0], eye[1], texture[2]);
 
 }
 
@@ -754,11 +423,11 @@ void key(unsigned char k, int x, int y)
 		break;
 			  }
 	case 'k': {
-		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.hue_sub();
+		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.hue_dec();
 		break;
 			  }
 	case 'l': {
-		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.hue_add();
+		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.hue_inc();
 		break;
 			  }
 	case 'r': {
@@ -770,11 +439,11 @@ void key(unsigned char k, int x, int y)
 		break;
 			  }
 	case 'i': {
-		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.size_sub();
+		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.size_dec();
 		break;
 			  }
 	case 'o': {
-		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.size_add();
+		if ( (abs(center[0])<20) && (abs(center[1])<20) && (abs(center[2])<20) ) Dyn1.size_inc();
 		break;
 			  }
 	case 'n': {
