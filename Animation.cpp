@@ -177,6 +177,8 @@ namespace Animation{
 
         DrawList(); // Draw Static Objects
         DrawScene(); // Draw Dynamic Objects
+
+
         static GLdouble points[][3] = {
                 {-10, 29, 0},
                 {10, 29, 0},
@@ -276,13 +278,13 @@ namespace Animation{
 
     void InitTexture() {
         glGenTextures(4, texture);
-        LoadTexture(0, "Wall.bmp");
-        LoadTexture(1, "Door.bmp");
-        LoadTexture(2, "Notice.bmp");
+        LoadTexture(0, "img/Wall.bmp");
+        LoadTexture(1, "img/Door.bmp");
+        LoadTexture(2, "img/Notice.bmp");
     }
 
-    void DrawScene() {
 
+    void DrawScene() {
         //The Desk
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture[1]);
@@ -323,11 +325,12 @@ namespace Animation{
 
         InitTexture();
 
+        loader.Load("obj/horse.obj");
         GenList(DrawWalls, &texture[0]);
         GenList(DrawFloor, &texture[1]);
+        GenList(DrawObj, &loader);
 
         gif.InitTexture();
-
         glutDisplayFunc(Redraw);
         glutReshapeFunc(Reshape);
         glutKeyboardFunc(ProcessKey);
@@ -369,6 +372,8 @@ namespace Animation{
     Light light4(0, 18, 19, 240, 4);
 
     ContinuousBmp gif(138, "src_gif/");
+
+    ObjLoader loader;
 
     GLuint texture[4];
     std::vector<GLint> list;

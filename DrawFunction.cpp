@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "DrawFunction.h"
+#include "ObjLoader.h"
 
 
 using namespace std;
@@ -273,4 +274,12 @@ void DrawFloor(GLuint texture) {
 
 void DrawFloor(void* param) {
     DrawFloor(*static_cast<GLuint*>(param));
+}
+
+void DrawObj(void *param) {
+    glPushMatrix();
+    glTranslated(-20.0, 0.0, 0.0);
+    glRotated(90, 1.0, 0, 0);
+    static_cast<ObjLoader*>(param)->Draw();
+    glPopMatrix();
 }

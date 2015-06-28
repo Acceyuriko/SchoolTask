@@ -30,6 +30,7 @@ void DrawFloor(GLuint texture);
 
 void DrawFloor(void* param);
 
+void DrawObj(void * param);
 
 
 

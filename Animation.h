@@ -12,6 +12,7 @@
 #include "Dyn.h"
 #include "Light.h"
 #include "ContinuousBmp.h"
+#include "ObjLoader.h"
 
 namespace Animation {
     void Reshape(int width, int height);
@@ -61,6 +62,8 @@ namespace Animation {
     extern Light light4;
 
     extern ContinuousBmp gif;
+
+    extern ObjLoader loader;
 
     extern GLuint texture[4];
     extern std::vector<GLint> list;
