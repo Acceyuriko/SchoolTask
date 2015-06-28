@@ -1,6 +1,7 @@
 Debug/
 glut/
 ipch/
+src_gif/
 ExZ.sdf
 ExZ.sln
 ExZ.vcxproj

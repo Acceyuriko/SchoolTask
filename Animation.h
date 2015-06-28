@@ -11,12 +11,13 @@
 #include "Door.h"
 #include "Dyn.h"
 #include "Light.h"
+#include "ContinuousBmp.h"
 
 namespace Animation {
-    static void Reshape(int width, int height);
-    static void Idle();
-    static void ProcessKey(unsigned char k, int x, int y);
-    static void Redraw();
+    void Reshape(int width, int height);
+    void Idle();
+    void ProcessKey(unsigned char k, int x, int y);
+    void Redraw();
     GLint GenList(void(*func)(void* param), void* param);
     unsigned char* LoadBitmapFile(char* filename, BITMAPINFOHEADER* bitmapInfoHeader);
     void LoadTexture(int i, char *filename);
@@ -42,6 +43,10 @@ namespace Animation {
 
     extern bool bOrbit;
 
+    extern float eye_temp[3];
+    extern float center_temp[3];
+    extern float eye_angle_temp;
+
     extern Door door1;
     extern Door door2;
     extern Door door3;
@@ -54,6 +59,8 @@ namespace Animation {
     extern Light light2;
     extern Light light3;
     extern Light light4;
+
+    extern ContinuousBmp gif;
 
     extern GLuint texture[4];
     extern std::vector<GLint> list;

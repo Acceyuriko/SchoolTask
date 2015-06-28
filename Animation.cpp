@@ -23,9 +23,6 @@ namespace Animation{
     }
 
     void ProcessKey(unsigned char k, int x, int y) {
-        float eye_temp[3];
-        float center_temp[3];
-        float eye_angle_temp = 0;
 
         switch (k) {
             // Move forward
@@ -180,6 +177,14 @@ namespace Animation{
 
         DrawList(); // Draw Static Objects
         DrawScene(); // Draw Dynamic Objects
+        static GLdouble points[][3] = {
+                {-10, 29, 0},
+                {10, 29, 0},
+                {10, 29, 20},
+                {-10, 29, 20}
+        };
+
+        gif.Display(points[0], points[1], points[2], points[3]);
 
         if (dyn1.if_rotate()) {
             dyn1.angle_change();
@@ -321,6 +326,8 @@ namespace Animation{
         GenList(DrawWalls, &texture[0]);
         GenList(DrawFloor, &texture[1]);
 
+        gif.InitTexture();
+
         glutDisplayFunc(Redraw);
         glutReshapeFunc(Reshape);
         glutKeyboardFunc(ProcessKey);
@@ -338,9 +345,13 @@ namespace Animation{
     GLfloat eye_angle_1 = 0;
     GLfloat eye_angle_2 = 0;
 
-    GLfloat step_radium = 0.12;
+    GLfloat step_radium = 0.20;
 
     GLfloat center[3] = {0, -6, 0};
+
+    float eye_temp[3];
+    float center_temp[3];
+    float eye_angle_temp = 0;
 
     bool bOrbit = false;
 
@@ -356,6 +367,8 @@ namespace Animation{
     Light light2(0, -18, 19, 240, 2);
     Light light3(-18, 0, 19, 240, 3);
     Light light4(0, 18, 19, 240, 4);
+
+    ContinuousBmp gif(138, "src_gif/");
 
     GLuint texture[4];
     std::vector<GLint> list;
