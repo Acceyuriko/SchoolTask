@@ -179,6 +179,10 @@ namespace Animation{
                 }
                 break;
             }
+            case ' ': {
+                SnapScreen();
+                break;
+            }
         }
     }
 
@@ -316,8 +320,8 @@ namespace Animation{
     }
 
     void SnapScreen() {
-        byte *image;
-        FILE *fp;
+        const int height = 576;
+        const int width = 576;
         BITMAPFILEHEADER bitmapFileHeader;
         BITMAPINFOHEADER bitmapInfoHeader;
 
@@ -325,8 +329,46 @@ namespace Animation{
         bitmapFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
         bitmapFileHeader.bfReserved1 = 0;
         bitmapFileHeader.bfReserved2 = 0;
-        bitmapFileHeader.bfSize = 512 * 512 * 24 + bitmapFileHeader.bfOffBits;
+        bitmapFileHeader.bfSize = height * width * 24 + bitmapFileHeader.bfOffBits;
+        
+        bitmapInfoHeader.biXPelsPerMeter = 0;
+        bitmapInfoHeader.biYPelsPerMeter = 0;
+        bitmapInfoHeader.biClrUsed = 0;
+        bitmapInfoHeader.biClrImportant = 0;
+        bitmapInfoHeader.biPlanes = 1;
+        bitmapInfoHeader.biCompression = BI_RGB;
+        bitmapInfoHeader.biBitCount = 24;
+        bitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bitmapInfoHeader.biHeight = height;
+        bitmapInfoHeader.biWidth = width;
+        bitmapInfoHeader.biSizeImage = height * width * 4;
 
+        auto image = new byte[sizeof(byte) * bitmapInfoHeader.biSizeImage];
+        if (image == nullptr) {
+            delete[] image;
+            fprintf(stderr, "memory error\n");
+            return;
+        }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        glReadPixels(0, 0, width, height, GL_BGR_EXT, GL_UNSIGNED_BYTE, image);
+
+        char name[100];
+        auto t = GetTickCount64();
+        
+        sprintf(name, "snapshot_%d.bmp", t);
+        auto fp = fopen(name, "wb");
+        if (fp == nullptr) {
+            delete[] image;
+            fprintf(stderr, "open error\n");
+            return;
+        }
+
+        fwrite(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, fp);
+        fwrite(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, fp);
+        fwrite(image, bitmapInfoHeader.biSizeImage, 1, fp);
+
+        delete[] image;
+        fclose(fp);
     }
 
 
