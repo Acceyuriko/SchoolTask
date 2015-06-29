@@ -376,6 +376,7 @@ void DrawFloor(GLuint texture) {
         glTexCoord2i(1,1); glVertex3i(25,-25,0);
         glTexCoord2i(0,1); glVertex3i(-25,-25,0);
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
 
     pa[2] = 19.9;
     pb[2] = 20.1;
@@ -391,7 +392,6 @@ void DrawFloor(GLuint texture) {
 
 	glPopMatrix();
 
-	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawFloor(void* param) {
@@ -400,7 +400,7 @@ void DrawFloor(void* param) {
 
 void DrawObj(void *param) {
     glPushMatrix();
-    glTranslated(-20.0, 0.0, 0.0);
+    glTranslated(-40.0, 0.0, 0.0);
     glRotated(90, 1.0, 0, 0);
     static_cast<ObjLoader*>(param)->Draw();
     glPopMatrix();

@@ -12,7 +12,7 @@ namespace Animation{
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
-        auto whRatio = static_cast<GLfloat>(width) / static_cast<GLfloat>(height);
+        whRatio = static_cast<GLfloat>(width) / static_cast<GLfloat>(height);
         gluPerspective(vision_angle, whRatio, 0.1f, 100.0f);
 
         glMatrixMode(GL_MODELVIEW);
@@ -79,13 +79,27 @@ namespace Animation{
                 break;
             }
             case 'z': {
-                if (vision_angle <= 75)
+                if (vision_angle <= 75) {
                     vision_angle += 0.5;
+                    glMatrixMode(GL_PROJECTION);
+                    glLoadIdentity();
+
+                    gluPerspective(vision_angle, whRatio, 0.1f, 100.0f);
+
+                    glMatrixMode(GL_MODELVIEW);
+                }
                 break;
             }
             case 'x': {
-                if (vision_angle >= 25)
+                if (vision_angle >= 25) {
                     vision_angle -= 0.5;
+                    glMatrixMode(GL_PROJECTION);
+                    glLoadIdentity();
+
+                    gluPerspective(vision_angle, whRatio, 0.1f, 100.0f);
+
+                    glMatrixMode(GL_MODELVIEW);
+                }
                 break;
             }
             case 'j': {
@@ -298,6 +312,21 @@ namespace Animation{
         LoadTexture(0, "img/Wall.bmp");
         LoadTexture(1, "img/Door.bmp");
         LoadTexture(2, "img/Notice.bmp");
+        LoadTexture(3, "img/Floor.bmp");
+    }
+
+    void SnapScreen() {
+        byte *image;
+        FILE *fp;
+        BITMAPFILEHEADER bitmapFileHeader;
+        BITMAPINFOHEADER bitmapInfoHeader;
+
+        bitmapFileHeader.bfType = BITMAP_ID;
+        bitmapFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+        bitmapFileHeader.bfReserved1 = 0;
+        bitmapFileHeader.bfReserved2 = 0;
+        bitmapFileHeader.bfSize = 512 * 512 * 24 + bitmapFileHeader.bfOffBits;
+
     }
 
 
@@ -345,9 +374,9 @@ namespace Animation{
         loader.Load("obj/horse.obj");
 
         GenList(DrawWalls, &texture[0]);
-        GenList(DrawFloor, &texture[1]);
-        double pa[3] = {-23, -7, 0};
-        double pb[3] = {-17, 7, 15};
+        GenList(DrawFloor, &texture[3]);
+        double pa[3] = {-43, -7, 0};
+        double pb[3] = {-37, 7, 15};
         check.Update(string("horse"), CheckCollsion::Cube(pa, pb));
         GenList(DrawObj, &loader);
 
@@ -376,6 +405,8 @@ namespace Animation{
     float eye_temp[3];
     float center_temp[3];
     float eye_angle_temp = 0;
+
+    extern double whRatio = 0;
 
     bool bOrbit = false;
 

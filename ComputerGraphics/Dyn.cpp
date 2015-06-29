@@ -68,7 +68,7 @@ void Dyn::draw() {
             break;
         case BALL:
             glutSolidSphere(l, 24, 24);
-            break;
+           break;
         case CONE:
             glutSolidCone(l, l * 1.5, 24, 24);
             break;

@@ -13,7 +13,6 @@
 #include "Light.h"
 #include "ContinuousBmp.h"
 #include "ObjLoader.h"
-#include "CheckCollision.h"
 
 namespace Animation {
     void Reshape(int width, int height);
@@ -24,7 +23,6 @@ namespace Animation {
     unsigned char* LoadBitmapFile(char* filename, BITMAPINFOHEADER* bitmapInfoHeader);
     void LoadTexture(int i, char *filename);
     void InitTexture();
-    void SnapScreen();
     void DrawScene();
     void DrawList();
     void Init(int argc, char *argv[]);
@@ -50,8 +48,6 @@ namespace Animation {
     extern float center_temp[3];
     extern float eye_angle_temp;
 
-    extern double whRatio;
-
     extern Door door1;
     extern Door door2;
     extern Door door3;
@@ -69,10 +65,10 @@ namespace Animation {
 
     extern ObjLoader loader;
 
-    extern CheckCollsion check;
-
     extern GLuint texture[4];
     extern std::vector<GLint> list;
+
+	extern double whRatio;
 };
 
 
