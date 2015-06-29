@@ -13,6 +13,7 @@
 #include "Light.h"
 #include "ContinuousBmp.h"
 #include "ObjLoader.h"
+#include "CheckCollision.h"
 
 namespace Animation {
     void Reshape(int width, int height);
@@ -64,6 +65,8 @@ namespace Animation {
     extern ContinuousBmp gif;
 
     extern ObjLoader loader;
+
+    extern CheckCollsion check;
 
     extern GLuint texture[4];
     extern std::vector<GLint> list;

@@ -2,9 +2,12 @@
 #include <cmath>
 #include "DrawFunction.h"
 #include "ObjLoader.h"
+#include "Animation.h"
+#include "CheckCollision.h"
 
 
 using namespace std;
+using namespace Animation;
 
 void DrawCube(GLfloat x, GLfloat y, GLfloat z, GLfloat a, GLfloat b, GLfloat c) {
     glPushMatrix();
@@ -120,6 +123,22 @@ void DrawWalls(GLuint texture) {
 	glPushMatrix();
 	glScalef(2, 2, 1);
 
+    double pa[3] = {10, 20, 0};
+    double pb[3] = {20, 20, 40};
+    char name[20];
+    int granularity = 100;
+    double thickness = 0.2;
+
+    double step = 10.0 / static_cast<double>(granularity);
+    for (int i = 0; i < granularity; i++) {
+        pa[0] += step;
+        pa[1] -= step;
+        pb[0] = pa[0] - step - 1;
+        pb[1] = pa[1] + step + 1;
+
+        sprintf(name, "slant_wall0_%d", i);
+        check.Update(string(name), CheckCollsion::Cube(pa, pb));
+    }
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(5, 10, 20);
     glTexCoord2i(1, 1); glVertex3i(10, 5, 20);
@@ -127,6 +146,17 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(5, 10, 0);
     glEnd();
 
+    pa[0] = 10;
+    pa[1] = -20;
+    for (int i = 0; i < granularity; i++) {
+        pa[0] += step;
+        pa[1] += step;
+        pb[0] = pa[0] - step - 1;
+        pb[1] = pa[1] - step - 1;
+
+        sprintf(name, "slant_wall1_%d", i);
+        check.Update(string(name), CheckCollsion::Cube(pa, pb));
+    }
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(10, -5, 20);
     glTexCoord2i(1, 1); glVertex3i(5, -10, 20);
@@ -134,6 +164,17 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(10, -5, 0);
     glEnd();
 
+    pa[0] = -10;
+    pa[1] = -20;
+    for (int i = 0; i < granularity; i++) {
+        pa[0] -= step;
+        pa[1] += step;
+        pb[0] = pa[0] + step + 1;
+        pb[1] = pa[1] - step - 1;
+
+        sprintf(name, "slant_wall2_%d", i);
+        check.Update(string(name), CheckCollsion::Cube(pa, pb));
+    }
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-5, -10, 20);
     glTexCoord2i(1, 1); glVertex3i(-10, -5, 20);
@@ -141,6 +182,17 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(-5, -10, 0);
     glEnd();
 
+    pa[0] = -20;
+    pa[1] = 10;
+    for (int i = 0; i < granularity; i++) {
+        pa[0] += step;
+        pa[1] += step;
+        pb[0] = pa[0] - step - 1;
+        pb[1] = pa[1] - step - 1;
+
+        sprintf(name, "slant_wall3_%d", i);
+        check.Update(string(name), CheckCollsion::Cube(pa, pb));
+    }
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-10, 5, 20);
     glTexCoord2i(1, 1); glVertex3i(-5, 10, 20);
@@ -148,7 +200,12 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(-10, 5, 0);
     glEnd();
 
-    // Wall 2
+    // Wall 2 +y
+    pa[0] = -10 + thickness;
+    pa[1] = 20;
+    pb[0] = -10 - thickness;
+    pb[1] = 50;
+    check.Update(string("wall2_0"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-5, 10, 20);
     glTexCoord2i(1, 1); glVertex3i(-5, 25, 20);
@@ -156,6 +213,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(-5, 10, 0);
     glEnd();
 
+    pa[0] = -10;
+    pa[1] = 50 + thickness;
+    pb[0] = 10;
+    pb[1] = 50 - thickness;
+    check.Update(string("wall2_1"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-5, 25, 20);
     glTexCoord2i(1, 1); glVertex3i(5, 25, 20);
@@ -163,6 +225,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(-5, 25, 0);
     glEnd();
 
+    pa[0] = 10 + thickness;
+    pa[1] = 20;
+    pb[0] = 10 - thickness;
+    pb[1] = 50;
+    check.Update(string("wall2_2"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(5, 25, 20);
     glTexCoord2i(1, 1); glVertex3i(5, 10, 20);
@@ -170,7 +237,12 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(5, 25, 0);
     glEnd();
 
-    // Wall 3
+    // Wall 3 +x
+    pa[0] = 20;
+    pa[1] = 10 + thickness;
+    pb[0] = 50;
+    pb[1] = 10 - thickness;
+    check.Update(string("wall3_0"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(10, 5, 20);
     glTexCoord2i(1, 1); glVertex3i(25, 5, 20);
@@ -178,6 +250,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(10, 5, 0);
     glEnd();
 
+    pa[0] = 50 + thickness;
+    pa[1] = -10;
+    pb[0] = 50 - thickness;
+    pb[1] = 10;
+    check.Update(string("wall3_1"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(25, 5, 20);
     glTexCoord2i(1, 1); glVertex3i(25, -5, 20);
@@ -185,6 +262,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(25, 5, 0);
     glEnd();
 
+    pa[0] = 20;
+    pa[1] = -10 - thickness;
+    pb[0] = 50;
+    pb[1] = -10 + thickness;
+    check.Update(string("wall3_2"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(25, -5, 20);
     glTexCoord2i(1, 1); glVertex3i(10, -5, 20);
@@ -192,7 +274,12 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(25, -5, 0);
     glEnd();
 
-    // Wall 4
+    // Wall 4 -y
+    pa[0] = 10 + thickness;
+    pa[1] = -20;
+    pb[0] = 10 - thickness;
+    pb[1] = -50;
+    check.Update(string("wall4_0"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(5, -10, 20);
     glTexCoord2i(1, 1); glVertex3i(5, -25, 20);
@@ -200,6 +287,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(5, -10, 0);
     glEnd();
 
+    pa[0] = -10;
+    pa[1] = -50 + thickness;
+    pb[0] = 10;
+    pb[1] = -50 - thickness;
+    check.Update(string("wall4_1"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(5, -25, 20);
     glTexCoord2i(1, 1); glVertex3i(-5, -25, 20);
@@ -207,6 +299,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(5, -25, 0);
     glEnd();
 
+    pa[0] = -10 + thickness;
+    pa[1] = -20;
+    pb[0] = -10 - thickness;
+    pb[1] = -50;
+    check.Update(string("wall4_2"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-5, -25, 20);
     glTexCoord2i(1, 1); glVertex3i(-5, -10, 20);
@@ -214,7 +311,12 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(-5, -25, 0);
     glEnd();
 
-    // Wall 5
+    // Wall 5 -x
+    pa[0] = -20;
+    pa[1] = -10 + thickness;
+    pb[0] = -50;
+    pb[1] = -10 - thickness;
+    check.Update(string("wall5_0"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-10, -5, 20);
     glTexCoord2i(1, 1); glVertex3i(-25, -5, 20);
@@ -222,6 +324,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(-10, -5, 0);
     glEnd();
 
+    pa[0] = -50 + thickness;
+    pa[1] = -10;
+    pb[0] = -50 - thickness;
+    pb[1] = 10;
+    check.Update(string("wall5_1"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-25, -5, 20);
     glTexCoord2i(1, 1); glVertex3i(-25, 5, 20);
@@ -229,6 +336,11 @@ void DrawWalls(GLuint texture) {
     glTexCoord2i(0, 0); glVertex3i(-25, -5, 0);
     glEnd();
 
+    pa[0] = -20;
+    pa[1] = 10 + thickness;
+    pb[0] = -50;
+    pb[1] = 10 - thickness;
+    check.Update(string("wall5_2"), CheckCollsion::Cube(pa, pb));
     glBegin(GL_QUADS);
     glTexCoord2i(0, 1); glVertex3i(-25, 5, 20);
     glTexCoord2i(1, 1); glVertex3i(-10, 5, 20);
@@ -253,12 +365,22 @@ void DrawFloor(GLuint texture) {
 	glPushMatrix();
 	glScalef(2, 2, 1);
 
+    double pa[3] = {-50, -50, -0.1};
+    double pb[3] = {50, 50, 0.1};
+
+    check.Update(string("floor"), CheckCollsion::Cube(pa, pb));
+
 	glBegin(GL_QUADS);              
         glTexCoord2i(0,0); glVertex3i(-25,25,0);
         glTexCoord2i(1,0); glVertex3i(25,25,0);
         glTexCoord2i(1,1); glVertex3i(25,-25,0);
         glTexCoord2i(0,1); glVertex3i(-25,-25,0);
 	glEnd();
+
+    pa[2] = 19.9;
+    pb[2] = 20.1;
+
+    check.Update(string("ceiling"), CheckCollsion::Cube(pa, pb));
 
 	glBegin(GL_QUADS);              
         glTexCoord2i(0,0); glVertex3i(-25,25,20);

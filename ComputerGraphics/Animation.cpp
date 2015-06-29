@@ -23,32 +23,49 @@ namespace Animation{
     }
 
     void ProcessKey(unsigned char k, int x, int y) {
+        double nextEye[3], nextCenter[3];
+        nextEye[2] = eye[2];
+        nextCenter[2] = center[2];
 
         switch (k) {
             // Move forward
             case 'w': {
-                eye[0] += step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
-                center[0] += step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
-                eye[1] += step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
-                center[1] += step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
+                nextEye[0] = eye[0] + step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
+                nextEye[1] = eye[1] + step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
+                nextCenter[0] = center[0] + step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
+                nextCenter[1] = center[1] + step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
+
+                if (!check.CheckAll(nextEye)) {
+                    eye[0] = nextEye[0];
+                	eye[1] = nextEye[1];
+                	center[0] = nextCenter[0];
+                	center[1] = nextCenter[1];
+                }
                 break;
             }
             // Move backward
             case 's': {
-                eye[0] -= step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
-                center[0] -= step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
-                eye[1] -= step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
-                center[1] -= step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
+                nextEye[0] = eye[0] - step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
+                nextEye[1] = eye[1] - step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
+                nextCenter[0] = center[0] - step_radium *(float(sin(double(M_PI*eye_angle_1 / 180))));
+                nextCenter[1] = center[1] - step_radium *(float(cos(double(M_PI*eye_angle_1 / 180))));
+
+                if (!check.CheckAll(nextEye)) {
+                    eye[0] = nextEye[0];
+                	eye[1] = nextEye[1];
+                	center[0] = nextCenter[0];
+                	center[1] = nextCenter[1];
+                }
                 break;
             }
             // Turn left
             case 'a': {
-                eye_angle_1 -= 1;
+                eye_angle_1 -= 2;
                 break;
             }
             // Turn right
             case 'd': {
-                eye_angle_1 += 1;
+                eye_angle_1 += 2;
                 break;
             }
             // Look upward
@@ -180,10 +197,10 @@ namespace Animation{
 
 
         static GLdouble points[][3] = {
-                {-10, 29, 0},
-                {10, 29, 0},
-                {10, 29, 20},
-                {-10, 29, 20}
+                {-10, 49, 0},
+                {10, 49, 0},
+                {10, 49, 20},
+                {-10, 49, 20}
         };
 
         gif.Display(points[0], points[1], points[2], points[3]);
@@ -326,8 +343,12 @@ namespace Animation{
         InitTexture();
 
         loader.Load("obj/horse.obj");
+
         GenList(DrawWalls, &texture[0]);
         GenList(DrawFloor, &texture[1]);
+        double pa[3] = {-23, -7, 0};
+        double pb[3] = {-17, 7, 15};
+        check.Update(string("horse"), CheckCollsion::Cube(pa, pb));
         GenList(DrawObj, &loader);
 
         gif.InitTexture();
@@ -348,7 +369,7 @@ namespace Animation{
     GLfloat eye_angle_1 = 0;
     GLfloat eye_angle_2 = 0;
 
-    GLfloat step_radium = 0.20;
+    GLfloat step_radium = 0.30;
 
     GLfloat center[3] = {0, -6, 0};
 
@@ -374,6 +395,8 @@ namespace Animation{
     ContinuousBmp gif(138, "src_gif/");
 
     ObjLoader loader;
+
+    CheckCollsion check;
 
     GLuint texture[4];
     std::vector<GLint> list;

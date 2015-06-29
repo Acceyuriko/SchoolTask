@@ -1,5 +1,11 @@
+#include <string>
 #include "Dyn.h"
 #include "DrawFunction.h"
+#include "Animation.h"
+#include "CheckCollision.h"
+
+using namespace std;
+using namespace Animation;
 
 Dyn::Dyn(float ix, float iy, float iz) 
     : l(1), x(ix), y(iy), z(iz), hue(0), shape(CUBE), bRotate(true), angle(0){
@@ -47,6 +53,10 @@ void Dyn::draw() {
         dif[3] = 0.7;
     }
 
+    double pa[3] = {-1, -1, 8};
+    double pb[3] = {1, 1, 12};
+
+    check.Update(string("shape"), CheckCollsion::Cube(pa, pb));
     glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
     glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 16);
     glPushMatrix();
