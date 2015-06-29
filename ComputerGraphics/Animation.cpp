@@ -213,7 +213,6 @@ namespace Animation{
         DrawList(); // Draw Static Objects
         DrawScene(); // Draw Dynamic Objects
 
-
         static GLdouble points[][3] = {
                 {-10, 49, 0},
                 {10, 49, 0},
@@ -435,7 +434,7 @@ namespace Animation{
     GLfloat fRotate = 0.0f;
     GLfloat fScale = 1.0f;
 
-    GLfloat eye[3] = {0, -14, 10};
+    GLfloat eye[4] = {0, -14, 10, 1};
     GLfloat eye_radium = 8;
     GLfloat eye_angle_1 = 0;
     GLfloat eye_angle_2 = 0;

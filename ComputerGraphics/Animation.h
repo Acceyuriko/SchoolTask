@@ -35,7 +35,7 @@ namespace Animation {
     extern GLfloat fRotate;
     extern GLfloat fScale;
 
-    extern GLfloat eye[3];
+    extern GLfloat eye[4];
     extern GLfloat eye_radium;
     extern GLfloat eye_angle_1;
     extern GLfloat eye_angle_2;

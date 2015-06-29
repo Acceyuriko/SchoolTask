@@ -11,6 +11,7 @@ public:
     void enable();
     void luminance_add(float x, float y);
     void luminance_sub(float x, float y);
+    void move(int index, GLfloat position[4], GLfloat dir[3]);
 private:
     float Lx;
     float Ly;

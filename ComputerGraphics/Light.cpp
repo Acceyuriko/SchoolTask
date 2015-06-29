@@ -11,13 +11,13 @@ void Light::enable() {
     glEnable(GL_LIGHTING);
     GLfloat light_pos[] = {Lx, Ly, Lz, 1};
     GLfloat light_col[] = {Ll / 240, Ll / 240, Ll / 240, 1};
-    //GLfloat light_colx[] = {0.4, 0.4, 0.4, 1};
+    GLfloat light_colx[] = {0.6, 0.6, 0.6, 1};
     GLfloat light_dir[] = {0, 0, -1};
 
     switch (Lr) {
         case 0: 
             glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-            glLightfv(GL_LIGHT0, GL_AMBIENT, light_col);
+            glLightfv(GL_LIGHT0, GL_AMBIENT, light_colx);
             glEnable(GL_LIGHT0);
             break;
         case 1:
@@ -69,4 +69,14 @@ void Light::luminance_sub(float x, float y) {
             Ll -= 5;
         }
     }
+}
+
+void Light::move(int index, GLfloat position[4], GLfloat dir[3]) {
+    switch (index) {
+        case 0:
+            glLightfv(GL_LIGHT0, GL_POSITION, position);
+            glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+        break;
+    }
+
 }
