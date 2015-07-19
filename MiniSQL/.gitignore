@@ -1,0 +1,9 @@
+*.sln
+*.suo
+*.vcxproj
+*.filters
+*.user
+Debug/
+sql/Debug/
+
+
